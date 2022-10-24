@@ -51,7 +51,7 @@ let partition (n:int) (q:int) =
 		On supposera n>=q
 	*)
 	if n=q || q=1 then 1 else (* cas de base, petite opti*)
-	let good l = if (List.fold_left ( + ) 0 l) = n then goodfl l else 0 in (*cas correct ?*)
+	let good l = if (List.fold_left ( + ) 0 l) = n then 1 else 0 in (*cas correct ?*)
 	
 	(*Modification des facteurs*)
 	let pmod a b = if a=n then b else a+1 in 
