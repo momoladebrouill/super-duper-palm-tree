@@ -27,8 +27,6 @@ let rec partition_deux n a b =
 		let a',b' = (if b=n then (a+1,a+1) else (a,b+1)) in
 		v + (partition_deux n a' b')
 
-
-
 let rec fl l= 
 	match l with
 	| [] -> print_newline ();
@@ -44,29 +42,32 @@ let badfl l=
 	fl l;
 	0
 
-let sum l = (List.fold_left ( + ) 0 l)
-let min a b = if a<b then a else b
+
 
 let partition (n:int) (q:int) =
-
-	let rec increment (l:int list) (prec:int) : (int list) =
+	(*
+		On fera une liste l de membres de la somme et on compte le nombre de fois où cette somme tombe juste
+		On supposera n>=q
+	*)
+	if n=q || q=1 then 1 else (* cas de base, petite opti*)
+	let good l = if (List.fold_left ( + ) 0 l) = n then goodfl l else 0 in (*cas correct ?*)
+	
+	(*Modification des facteurs*)
+	let pmod a b = if a=n then b else a+1 in 
+	let rec increment (l:int list) (p:int): (int list) =
 		match l with
 		| [] -> []
-		| h::t ->
-			let coef =
-				if prec >= n then  
-					if h >= n then List.hd t else h+1
-		 		else h
-		 	in coef::(increment t coef)  
+		| [x] -> [pmod x p]
+		| t::q -> let t' = if List.hd q >= n then pmod t p else t in
+			 t'::increment q t'  
 	in
-			
+	
+	(*Essais*)
 	let rec partion (l:int list) : int =
-		if List.hd (List.rev l) >= n then 0 (*dernier membre de la somme*)
-		else 
-			(if sum l = n then goodfl l else badfl l) + partion (increment l (n+5)) 
-	in 
-		partion (List.init q (fun _->1))
-				
+		if List.hd l >= n then 0 (*si le premier membre a atteint n, on a fini*)
+		else good l + partion (increment l 0) (*recursion des cas*) 
+	in
+	partion (List.init q (fun _->1))
 	
 	
 	
@@ -75,10 +76,4 @@ let partition (n:int) (q:int) =
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
+
