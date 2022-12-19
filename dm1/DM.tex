@@ -1,0 +1,119 @@
+\hypertarget{devoir-maison-en-ocaml}{%
+\section{Devoir maison en Ocaml}\label{devoir-maison-en-ocaml}}
+
+\hypertarget{exercice-1}{%
+\subsection{Exercice 1}\label{exercice-1}}
+
+On peut implémenter de façon naive la suite de Fibonacci par sa
+définition mathématique :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{let} \KeywordTok{rec}\NormalTok{ fib n =}
+  \KeywordTok{match}\NormalTok{ n }\KeywordTok{with} 
+  \DecValTok{0}\NormalTok{ | }\DecValTok{1}\NormalTok{ {-}\textgreater{} n}
+\NormalTok{  | n {-}\textgreater{} fib (n}\DecValTok{{-}1}\NormalTok{) + fib (n}\DecValTok{{-}2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Mais cet algorithme devient lent pour de grande valeurs. En effet, il a
+une complexcité en O(n2) Une solution serait de faire un appel récursif
+en branche simple :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{let}\NormalTok{ fib2 n =}
+  \KeywordTok{let} \KeywordTok{rec}\NormalTok{ fib\_aux n =}
+    \KeywordTok{match}\NormalTok{ n }\KeywordTok{with}
+\NormalTok{    | }\DecValTok{0}\NormalTok{ {-}\textgreater{} (}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{)}
+\NormalTok{    | }\DecValTok{1}\NormalTok{ {-}\textgreater{} (}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+\NormalTok{    | n {-}\textgreater{} }\KeywordTok{let}\NormalTok{ a,b = fib\_aux (n}\DecValTok{{-}1}\NormalTok{) }\KeywordTok{in}\NormalTok{ (a+b,a)}
+  \KeywordTok{in} 
+    \KeywordTok{let}\NormalTok{ a,b = fib\_aux n }\KeywordTok{in}\NormalTok{ a}
+\end{Highlighting}
+\end{Shaded}
+
+ici, on fait une récursivité terminale afin de miniser le coup en
+mémoire et en temps : cet algorithme a une compléxicité de O(n)
+
+\hypertarget{exercice-2}{%
+\subsection{Exercice 2}\label{exercice-2}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{let} \KeywordTok{rec}\NormalTok{ permute all =}
+  \CommentTok{(*Liste des permutation des éléments*)}
+  \KeywordTok{if}\NormalTok{ all = [] }\KeywordTok{then}\NormalTok{ [[]] }\KeywordTok{else}
+  \KeywordTok{let}\NormalTok{ join l1 l2 = [l1;l2] }\KeywordTok{in} 
+  \KeywordTok{let}\NormalTok{ remove elem l = }\DataTypeTok{List}\NormalTok{.filter ((\textless{}\textgreater{}) elem) l }\KeywordTok{in}
+  \DataTypeTok{List}\NormalTok{.concat }\CommentTok{(*assemblage*)}
+\NormalTok{    (}
+    \DataTypeTok{List}\NormalTok{.map }\CommentTok{(*combinaisons*)}
+\NormalTok{      (}\KeywordTok{fun}\NormalTok{ t {-}\textgreater{} }\DataTypeTok{List}\NormalTok{.map }
+\NormalTok{        (}\DataTypeTok{List}\NormalTok{.cons t)}
+\NormalTok{        (permute (remove t all)))}
+\NormalTok{      all}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{exercice-3}{%
+\subsection{Exercice 3}\label{exercice-3}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{let}\NormalTok{ partition (n:}\DataTypeTok{int}\NormalTok{) (q:}\DataTypeTok{int}\NormalTok{) =}
+    \CommentTok{(*}
+\CommentTok{        On fera la liste l de membres de la somme et on compte le nombre de fois où cette somme tombe juste}
+\CommentTok{        On suppose n\textgreater{}=q}
+\CommentTok{    *)}
+    \KeywordTok{if}\NormalTok{ n=q || q=}\DecValTok{1} \KeywordTok{then} \DecValTok{1} \KeywordTok{else} \CommentTok{(*cas de base*)}
+    \KeywordTok{let}\NormalTok{ is\_good (l:}\DataTypeTok{int} \DataTypeTok{list}\NormalTok{) : }\DataTypeTok{int}\NormalTok{ = }\KeywordTok{if}\NormalTok{ (}\DataTypeTok{List}\NormalTok{.fold\_left ( + ) }\DecValTok{0}\NormalTok{ l) = n }\KeywordTok{then} \DecValTok{1} \KeywordTok{else} \DecValTok{0} \KeywordTok{in}
+    
+    \CommentTok{(*Modification des facteurs*)}
+    \KeywordTok{let}\NormalTok{ (++|) a b = }\KeywordTok{if}\NormalTok{ a=n }\KeywordTok{then}\NormalTok{ b }\KeywordTok{else}\NormalTok{ a+}\DecValTok{1} \KeywordTok{in} 
+    \KeywordTok{let} \KeywordTok{rec}\NormalTok{ increment (l:}\DataTypeTok{int} \DataTypeTok{list}\NormalTok{) (p:}\DataTypeTok{int}\NormalTok{): (}\DataTypeTok{int} \DataTypeTok{list}\NormalTok{) =}
+        \KeywordTok{match}\NormalTok{ l }\KeywordTok{with}
+\NormalTok{        | [] {-}\textgreater{} []}
+\NormalTok{        | [x] {-}\textgreater{} [x ++| p]}
+\NormalTok{        | t::q {-}\textgreater{} }\KeywordTok{let}\NormalTok{ t\textquotesingle{} = }\KeywordTok{if} \DataTypeTok{List}\NormalTok{.hd q \textgreater{}= n }\KeywordTok{then}\NormalTok{ t ++| p }\KeywordTok{else}\NormalTok{ t }\KeywordTok{in}
+\NormalTok{             t\textquotesingle{}::increment q t\textquotesingle{}  }
+    \KeywordTok{in}
+    
+    \CommentTok{(*Essais*)}
+    \KeywordTok{let} \KeywordTok{rec}\NormalTok{ partion (l:}\DataTypeTok{int} \DataTypeTok{list}\NormalTok{) : }\DataTypeTok{int}\NormalTok{ =}
+        \KeywordTok{if} \DataTypeTok{List}\NormalTok{.hd l \textgreater{}= n }\KeywordTok{then} \DecValTok{0} \CommentTok{(*si le premier membre a atteint n, on a fini*)}
+        \KeywordTok{else}\NormalTok{ is\_good l + partion (increment l }\DecValTok{0}\NormalTok{) }\CommentTok{(*recursion des cas*)} 
+    \KeywordTok{in}
+\NormalTok{    partion (}\DataTypeTok{List}\NormalTok{.init q (}\KeywordTok{fun}\NormalTok{ \_{-}\textgreater{}}\DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+On obtient alors le tableau : Name Type Description Example ---- ----
+----------- ------- \textbf{an-integer} \emph{Integer} A 64-bit Number
+\texttt{12346} \textbar{} \textbf{0} \textbar{} 1 \textbar{} 0
+\textbar{} 0 \textbar{} 0 \textbar{} 0 \textbar{} 0 \textbar{} 0
+\textbar{} 0 \textbar{} 0 \textbar{} 0 \textbar{}
+\textbar-------\textbar---\textbar---\textbar---\textbar---\textbar---\textbar---\textbar---\textbar---\textbar---\textbar---\textbar{}
+\textbar{} \textbf{1} \textbar{} 1 \textbar{} 1 \textbar{} 0 \textbar{}
+0 \textbar{} 0 \textbar{} 0 \textbar{} 0 \textbar{} 0 \textbar{} 0
+\textbar{} 0 \textbar{} \textbar{} \textbf{2} \textbar{} 1 \textbar{} 1
+\textbar{} 1 \textbar{} 0 \textbar{} 0 \textbar{} 0 \textbar{} 0
+\textbar{} 0 \textbar{} 0 \textbar{} 0 \textbar{} \textbar{} \textbf{3}
+\textbar{} 1 \textbar{} 2 \textbar{} 1 \textbar{} 1 \textbar{} 0
+\textbar{} 0 \textbar{} 0 \textbar{} 0 \textbar{} 0 \textbar{} 0
+\textbar{} \textbar{} \textbf{4} \textbar{} 1 \textbar{} 2 \textbar{} 2
+\textbar{} 1 \textbar{} 1 \textbar{} 0 \textbar{} 0 \textbar{} 0
+\textbar{} 0 \textbar{} 0 \textbar{} \textbar{} \textbf{5} \textbar{} 1
+\textbar{} 3 \textbar{} 3 \textbar{} 2 \textbar{} 1 \textbar{} 1
+\textbar{} 0 \textbar{} 0 \textbar{} 0 \textbar{} 0 \textbar{}
+\textbar{} \textbf{6} \textbar{} 1 \textbar{} 3 \textbar{} 4 \textbar{}
+3 \textbar{} 2 \textbar{} 1 \textbar{} 1 \textbar{} 0 \textbar{} 0
+\textbar{} 0 \textbar{} \textbar{} \textbf{7} \textbar{} 1 \textbar{} 4
+\textbar{} 5 \textbar{} 5 \textbar{} 3 \textbar{} 2 \textbar{} 1
+\textbar{} 1 \textbar{} 0 \textbar{} 0 \textbar{} \textbar{} \textbf{8}
+\textbar{} 1 \textbar{} 4 \textbar{} 7 \textbar{} 6 \textbar{} 5
+\textbar{} 3 \textbar{} 2 \textbar{} 1 \textbar{} 1 \textbar{} 0
+\textbar{} \textbar{} \textbf{9} \textbar{} 1 \textbar{} 5 \textbar{} 8
+\textbar{} 9 \textbar{} 7 \textbar{} 5 \textbar{} 3 \textbar{} 2
+\textbar{} 1 \textbar{} 1 \textbar{}
