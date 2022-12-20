@@ -1,0 +1,52 @@
+\documentclass{article}
+\usepackage[french]{babel}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{color}
+
+\lstset{frame=false,
+  language=C,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{red},
+  commentstyle=\color{olive},
+  stringstyle=\color{green},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=4
+}
+
+
+\title{DM Enveloppe convexe}
+\author{Bartolomeo Ryan}
+
+\begin{document}
+\maketitle
+
+
+\section{Fonction plus bas}
+\begin{lstlisting}
+int plus_bas(int tab[][2],int n){
+    int j=0;
+    for(int i=1;i<n;i++){
+        if(tab[i][1]<tab[j][1] 
+                || (tab[i][1]==tab[j][1] && tab[i][0]<tab[j][0] ))
+            j = i;
+    }
+    return j;
+}
+\end{lstlisting}
+\section{Correction}
+On veut montrer la spécification :  \\ 
+$E : T \subset \mathbb{Z}^2, $   \\
+$S : m = min_{\preceq} T$ avec  $a \preceq b  \Leftrightarrow e_y<f_y \lor (e_y=f_y \land e_x<f_y)$\\
+
+\end{document}
