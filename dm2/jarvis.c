@@ -148,6 +148,7 @@ int main(void){
     s=conv_graham(tab,len);
     for(int i=s->size;i--;) printf("%d ",pop(s));
     printf("\n");
+    prochain_point(tab,len,10);
 }
 
 
