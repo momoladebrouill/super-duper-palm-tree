@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
-
+#define len 12
 int N = 100;
 struct stack_t {
     int *elements;
@@ -85,18 +85,36 @@ int conv_jarvis(int tab[][2], int n, int *env){
 void maj_es(int tab[][2],stack es,int i){
     int t;
     int n;
-    while(es->size >= 2){
+    bool ordered=true;
+    while(es->size >= 2 && ordered){
         t=pop(es);
         n=top(es);
         push(t,es);
-        if(orient(tab,i,t,n)>=0){
-            break;
-        }
-        pop(es);
+
+        if(orient(tab,i,t,n)<0)
+            pop(es);
+        else
+            ordered=false;
     }
     push(i,es);
 }
 
+void maj_ei(int tab[][2],stack ei,int i){
+    int t;
+    int n;
+    bool ordered=true;
+    while(ei->size >= 2 && ordered){
+        t=pop(ei);
+        n=top(ei);
+        push(t,ei);
+
+        if(orient(tab,i,t,n)>0)
+            pop(ei);
+        else
+            ordered=false;
+    }
+    push(i,ei);
+}
 
 stack conv_graham(int tab[][2],int n){
     stack es=new_stack();
@@ -105,10 +123,15 @@ stack conv_graham(int tab[][2],int n){
         maj_es(tab,es,i);
         maj_ei(tab,ei,i);
     }
-    printf("Done.\n");
-    for(int i=es->size;i--;)
-        printf("%d ",pop(es));
-    return es;
+    stack s=new_stack();
+    pop(es);
+    stack reversed_es=new_stack();
+    for(int i=es->size;i--;)push(pop(es),reversed_es);
+    for(int i=reversed_es->size;i--;)push(pop(reversed_es),s);
+    for(int i=ei->size;i>1;i--)push(pop(ei),s);
+    
+    return s;
+
 }
 
 
@@ -117,11 +140,14 @@ int main(void){
         { 0, 0 }, { 1, 4 }, { 1, 8 }, { 4, 1 }, { 4, 4 }, { 5, 9 },
         { 5, 6 }, { 7, -1 }, { 7, 2 }, { 8, 5 }, { 11, 6 }, { 13, 1 }
     };
-    int *env = malloc(15*sizeof(int));
-    int nb = conv_jarvis(tab,12,env);
+    int *env = malloc(len*sizeof(int));
+    int nb = conv_jarvis(tab,len,env);
     for(int i=0;i<nb;i++) printf("%d ",env[i]);
     printf("\n");
-    conv_graham(tab,12);
+    stack s;
+    s=conv_graham(tab,len);
+    for(int i=s->size;i--;) printf("%d ",pop(s));
+    printf("\n");
 }
 
 
