@@ -10,7 +10,7 @@
 \usepackage{color}
 \usepackage{minted}
 \usepackage{multirow}
-\usemintedstyle{colorfull}
+\usemintedstyle{colorful}
 
 
 \title{DM Enveloppe convexe}
@@ -56,50 +56,50 @@ Ainsi, puisque la boucle termine et que \mintinline{C}{J} contient la valeur du 
 
 \section{Exemples d'orientation}
 \begin{center}
-\begin{tabular}{ c c c c }
-    i & j & k & Orientation \\ 
-    0 & 3 & 4 & 1\\  
-    8 & 9 & 10 & -1    
-\end{tabular}
+    \begin{tabular}{ c c c c }
+        i & j & k & Orientation \\ 
+        0 & 3 & 4 & 1\\  
+        8 & 9 & 10 & -1    
+    \end{tabular}
 \end{center}
 \section{Fonction orientation}
 \begin{minted}{C}
-int orient(int tab[][2],int i, int j, int k){
-  int r=(tab[k][1]-tab[i][1])*(tab[j][0]-tab[i][0])-(tab[k][0]-tab[i][0])*(tab[j][1]-tab[i][1]);
-  return (r ? r/abs(r): 0);
-}
+    int orient(int tab[][2],int i, int j, int k){
+        int r=(tab[k][1]-tab[i][1])*(tab[j][0]-tab[i][0])-(tab[k][0]-tab[i][0])*(tab[j][1]-tab[i][1]);
+        return (r ? r/abs(r): 0);
+        }
 \end{minted}
 \section{Relation d'ordre de $\preceq$}
 $\preceq$ est une relation d'ordre car elle est réflexive, antisymétrique et transitive sur l'ensemble $P$.
 
 \section{Fonction prochain point}
 \begin{minted}{C}
-int prochain_point(int tab[][2],int n,int i){
-    int j=0;
-    for(int k=0;k<n;k++){
-        if(orient(tab,i,j,k)<=0 && k!=i)
+    int prochain_point(int tab[][2],int n,int i){
+        int j=0;
+        for(int k=0;k<n;k++){
+            if(orient(tab,i,j,k)<=0 && k!=i)
             j = k;
-    }
-    return j;
-}
+        }
+        return j;
+        }
 \end{minted}
 \section{Prochain point pour $i=10$}
 \begin{tabular}{c c  c  c  c  c  c  c  c  c  c  c  c}    
-j & 0 & 1 & 2 & 2 & 2 & 5 & 5 & 5 & 5 & 5 & 5 & 5 \\
-k & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\
+    j & 0 & 1 & 2 & 2 & 2 & 5 & 5 & 5 & 5 & 5 & 5 & 5 \\
+    k & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\
 \end{tabular}
 \section{Fonction Enveloppe Convexe de Jarvis}
 \begin{minted}{C}
-int conv_jarvis(int tab[][2], int n, int *env){
-    int i=plus_bas(tab,n);
-    int ind=0;
-    int p=i;
-    do{
-        env[ind++]=p;
-        p=prochain_point(tab,n,p);
-    }while(i!=p);
-    return ind;
-}
+    int conv_jarvis(int tab[][2], int n, int *env){
+        int i=plus_bas(tab,n);
+        int ind=0;
+        int p=i;
+        do{
+            env[ind++]=p;
+            p=prochain_point(tab,n,p);
+        }while(i!=p);
+        return ind;
+        }
 \end{minted}
 \section{Temps d'éxécution}
 Cette fonction prendrai dans l'ordre de $n+n*n$ opérations pour récuperer l'enveloppe dans le pire des cas, on estime donc sa complixé temporelle à $O(n^2)$
@@ -108,60 +108,60 @@ Cette fonction prendrai dans l'ordre de $n+n*n$ opérations pour récuperer l'en
 Parmi les algorithmes de tri répandus, on peut penser au tri fusion (ou \textit{merge sort}) qui a une compléxicité de $O(n ln(n))$
 \section{Fonction Mise à jour de l'enveloppe supérieure}
 \begin{minted}{C}
-void maj_es(int tab[][2],stack es,int i){
-    int t;
-    int n;
-    bool ordered=true;
-    while(es->size >= 2 && ordered){
-        t=pop(es);
-        n=top(es);
-        push(t,es);
+    void maj_es(int tab[][2],stack es,int i){
+        int t;
+        int n;
+        bool ordered=true;
+        while(es->size >= 2 && ordered){
+            t=pop(es);
+            n=top(es);
+            push(t,es);
 
-        if(orient(tab,i,t,n)<0)
+            if(orient(tab,i,t,n)<0)
             pop(es);
-        else
+            else
             ordered=false;
-    }
-    push(i,es);
-}
+        }
+        push(i,es);
+        }
 \end{minted}
 \section{Fonction Mise à jour de l'enveloppe inférieure}
 \begin{minted}{C}
-void maj_ei(int tab[][2],stack ei,int i){
-    int t;
-    int n;
-    bool ordered=true;
-    while(ei->size >= 2 && ordered){
-        t=pop(ei);
-        n=top(ei);
-        push(t,ei);
+    void maj_ei(int tab[][2],stack ei,int i){
+        int t;
+        int n;
+        bool ordered=true;
+        while(ei->size >= 2 && ordered){
+            t=pop(ei);
+            n=top(ei);
+            push(t,ei);
 
-        if(orient(tab,i,t,n)>0)
+            if(orient(tab,i,t,n)>0)
             pop(ei);
-        else
+            else
             ordered=false;
-    }
-    push(i,ei);
-}
+        }
+        push(i,ei);
+        }
 \end{minted}
 \section{Fonction Enveloppe convexe de Graham (variante de A.Andrew)}
 \begin{minted}{C}
-stack conv_graham(int tab[][2],int n){
-    stack es=new_stack();
-    stack ei=new_stack();
-    for(int i=0;i<n;i++){
-        maj_es(tab,es,i);
-        maj_ei(tab,ei,i);
-    }
-    stack s=new_stack();
-    pop(es);
-    stack reversed_es=new_stack();
-    for(int i=es->size;i--;)push(pop(es),reversed_es);
-    for(int i=reversed_es->size;i--;)push(pop(reversed_es),s);
-    for(int i=ei->size;i>1;i--)push(pop(ei),s);
-    
-    return si;
-}
+    stack conv_graham(int tab[][2],int n){
+        stack es=new_stack();
+        stack ei=new_stack();
+        for(int i=0;i<n;i++){
+            maj_es(tab,es,i);
+            maj_ei(tab,ei,i);
+        }
+        stack s=new_stack();
+        pop(es);
+        stack reversed_es=new_stack();
+        for(int i=es->size;i--;)push(pop(es),reversed_es);
+        for(int i=reversed_es->size;i--;)push(pop(reversed_es),s);
+        for(int i=ei->size;i>1;i--)push(pop(ei),s);
+
+        return si;
+        }
 \end{minted}
 \section{Analyse du temps d'éxécution}
 Les fonctions de mises à jour prennent au pire des cas $\log n$ opérations pour être éxécutés.
